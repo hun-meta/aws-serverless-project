@@ -1,0 +1,3 @@
+export const HEALTH_CHECK_LAMBDA_SERVICE_CODE = {
+    HEALTH_CHECK_SERVICE: '1',
+};
