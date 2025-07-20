@@ -16,13 +16,16 @@ cdk-prj/
 ├── 📁 lib/                    # CDK 인프라 코드
 │   ├── 📁 stacks/            # CDK 스택 정의
 │   ├── 📁 utils/             # 유틸리티 및 헬퍼 함수
-│   ├── 📁 config/            # 환경별 설정 (비어있음)
-│   └── 📁 constructs/        # 재사용 가능한 CDK 구성요소 (비어있음)
+│   ├── 📁 config/            # 환경별 설정 (향후 확장)
+│   └── 📁 constructs/        # 재사용 가능한 CDK 구성요소 (향후 확장)
 ├── 📁 lambda/                 # Lambda 함수 코드
 │   └── 📁 functions/         # 개별 Lambda 함수들
 ├── 📁 packages/               # 공유 패키지 및 라이브러리
 │   └── 📁 lambda-common/     # Lambda 함수 공통 라이브러리
 ├── 📁 docs/                   # 프로젝트 문서
+├── 📁 scripts/                # 배포 및 관리 스크립트 (향후 확장)
+├── 📁 tests/                  # 테스트 파일 (향후 확장)
+├── 📁 .github/                # GitHub Actions 워크플로우 (향후 확장)
 ├── 📁 .claude/                # Claude AI 설정
 ├── 📁 .git/                   # Git 버전 관리
 └── 📄 설정 및 구성 파일들
@@ -135,25 +138,51 @@ utils/
 - Lambda 함수 식별자
 - 포트 및 프로토콜 상수
 
+#### `/lib/config` - 환경별 설정 (향후 확장)
+**목적**: 환경별 세부 설정 파일 (현재 environment.ts에서 관리)
+
+#### `/lib/constructs` - 재사용 가능한 CDK 구성요소 (향후 확장)
+**목적**: 커스텀 CDK Construct 라이브러리
+
 ### `/lambda` - Lambda 함수 코드
 **목적**: 서버리스 비즈니스 로직 구현
 
 ```
 lambda/
 └── functions/
-    └── health-check/           # 헬스체크 Lambda 함수
-        ├── src/
-        │   ├── constant/       # 상수 정의
-        │   ├── dto/           # 데이터 전송 객체
-        │   ├── interface/     # 타입 인터페이스 (비어있음)
-        │   ├── service/       # 비즈니스 로직 서비스
-        │   └── lambda.ts      # Lambda 핸들러
-        ├── package.json       # 의존성 관리
-        ├── tsconfig.json      # TypeScript 설정
-        └── .gitignore         # Git 제외 파일
+    ├── health-check/           # 헬스체크 Lambda 함수 (구현됨)
+    │   ├── src/
+    │   │   ├── constant/       # 상수 정의
+    │   │   ├── dto/           # 데이터 전송 객체
+    │   │   ├── interface/     # 타입 인터페이스 (비어있음)
+    │   │   ├── service/       # 비즈니스 로직 서비스
+    │   │   └── lambda.ts      # Lambda 핸들러
+    │   ├── package.json       # 의존성 관리
+    │   ├── tsconfig.json      # TypeScript 설정
+    │   └── .gitignore         # Git 제외 파일
+    ├── auth/                  # 인증 관련 함수 (계획됨)
+    │   └── src/
+    │       ├── lambda.ts      # Lambda 진입점 (컨트롤러 역할)
+    │       ├── dto/           # 로그인, 회원가입, 토큰 DTO
+    │       ├── interface/     # 인증 및 사용자 인터페이스
+    │       ├── service/       # 인증, 토큰, 검증 서비스
+    │       └── constant/      # 에러 및 응답 상수
+    └── user/                  # 사용자 관리 함수 (계획됨)
+        └── src/
+            ├── lambda.ts      # Lambda 진입점 (컨트롤러 역할)
+            ├── dto/           # 프로필, 업데이트, 삭제 DTO
+            ├── interface/     # 사용자 및 프로필 인터페이스
+            ├── service/       # 사용자, 프로필, 검증 서비스
+            └── constant/      # 에러 및 응답 상수
 ```
 
-**헬스체크 함수 구조**:
+**Lambda 함수 아키텍처**:
+- **MVC 패턴 적용**: 각 함수는 하나의 `lambda.ts` 파일(컨트롤러)에서 시작
+- **계층화 구조**: DTO, Interface, Service, Constant 분리
+- **마이크로서비스 단위**: 하나의 Lambda 함수가 최대 10개의 API 엔드포인트 처리
+- **공통 패키지 의존성**: `@hun_meta/lambda-common` 패키지 사용
+
+**헬스체크 함수 구조 (현재 구현됨)**:
 
 **constants/**:
 - `error-info.constant.ts`: 에러 코드 및 메시지
@@ -181,13 +210,20 @@ packages/
     │   ├── interface/         # 공통 인터페이스
     │   ├── service/          # 공통 서비스
     │   └── index.ts          # 패키지 진입점
+    ├── dist/                 # TypeScript 컴파일 결과물
     ├── package.json          # 패키지 설정
     ├── tsconfig.json         # TypeScript 설정
     ├── .eslintrc.js         # ESLint 설정
+    ├── .gitignore           # Git 제외 파일
     └── README.md            # 패키지 문서
 ```
 
 **lambda-common 라이브러리**:
+- **NPM 패키지 형태**: `@hun_meta/lambda-common`으로 발행됨
+- **로컬 파일 경로 참조**: `file:../../../packages/lambda-common`
+- **TypeScript 빌드**: `src/` → `dist/` 컴파일
+- **모듈화된 구조**: constant, exception, interface, service 분리
+- **중앙 집중식 공통 코드 관리**: 에러 코드, 서비스 클래스, 타입 정의
 
 **constants/**:
 - `common-code.constant.ts`: 공통 액션 코드
@@ -214,9 +250,49 @@ packages/
 
 ```
 docs/
-├── COMMIT_CONVENTION.md      # 커밋 메시지 규칙
-├── PRIVATE_NPM_PACKAGE.md    # NPM 패키지 관리 가이드
-└── REPOSITORY_STRUCTURE.md   # 저장소 구조 설명
+├── COMMIT_CONVENTION.md      # 커밋 메시지 규칙 (한/영)
+├── PRIVATE_NPM_PACKAGE.md    # NPM 패키지 관리 가이드 (한/영)
+└── REPOSITORY_STRUCTURE.md   # 저장소 구조 설명 (이전 버전)
+```
+
+### `/scripts` - 배포 및 관리 스크립트 (향후 확장)
+**목적**: 자동화된 배포 및 관리 스크립트
+
+```
+scripts/ (계획됨)
+├── deploy-dev.sh             # 개발 환경 배포 스크립트
+├── deploy-prod.sh            # 운영 환경 배포 스크립트
+├── destroy-env.sh            # 환경 제거 스크립트
+└── setup.sh                  # 초기 설정 스크립트
+```
+
+### `/tests` - 테스트 파일 (향후 확장)
+**목적**: 단위 테스트 및 통합 테스트
+
+```
+tests/ (계획됨)
+├── unit/                     # 단위 테스트
+│   ├── vpc-stack.test.ts     # VPC 스택 테스트
+│   ├── lambda-stack.test.ts  # Lambda 스택 테스트
+│   └── database-stack.test.ts # 데이터베이스 스택 테스트
+├── integration/              # 통합 테스트
+│   ├── api-gateway.test.ts   # API Gateway 테스트
+│   └── database-connection.test.ts # DB 연결 테스트
+└── fixtures/                 # 테스트 픽스처
+    ├── sample-data.json      # 샘플 데이터
+    └── mock-responses.json   # 모의 응답
+```
+
+### `/.github` - GitHub Actions (향후 확장)
+**목적**: CI/CD 파이프라인 및 GitHub 관련 설정
+
+```
+.github/ (계획됨)
+├── workflows/                # GitHub Actions
+│   ├── ci.yml               # CI 파이프라인
+│   ├── deploy-dev.yml       # 개발 환경 배포
+│   └── deploy-prod.yml      # 운영 환경 배포
+└── PULL_REQUEST_TEMPLATE.md # PR 템플릿
 ```
 
 ### 설정 및 구성 파일
@@ -227,10 +303,12 @@ docs/
 ├── tsconfig.json            # TypeScript 설정
 ├── cdk.json                 # CDK 설정 및 환경 구성
 ├── cdk.context.json         # CDK 컨텍스트 캐시
+├── cdk_request_template.md  # CDK 구현 요청 템플릿
 ├── jest.config.js           # Jest 테스트 설정 (향후 사용)
 ├── .gitignore              # Git 제외 파일
 ├── LICENSE                 # MIT 라이선스
-└── README.md               # 프로젝트 개요
+├── README.md               # 프로젝트 개요 (한/영)
+└── SUGGESTION.md           # 프로젝트 개선 제안
 ```
 
 **주요 설정 파일 역할**:
@@ -312,6 +390,17 @@ aws logs tail /aws/lambda/health-check --follow
 - 새 CDK 스택: `lib/stacks/새스택.ts`
 - 공통 유틸리티: `packages/lambda-common/src/`
 
+## 🏷️ 명명 규칙
+
+### 스택 명명
+- **형식**: `{Environment}{Service}Stack`
+- **예시**: `DevVpcStack`, `ProdLambdaStack`
+
+### Lambda 함수 명명
+- **형식**: `{environment}-{domain}-function`
+- **예시**: `dev-auth-function`, `prod-user-function`
+- **설명**: 각 함수는 최대 10개의 API 엔드포인트를 마이크로서비스 단위로 처리
+
 ---
 
 ## 🇺🇸 English {#english}
@@ -326,13 +415,16 @@ cdk-prj/
 ├── 📁 lib/                    # CDK infrastructure code
 │   ├── 📁 stacks/            # CDK stack definitions
 │   ├── 📁 utils/             # Utilities and helper functions
-│   ├── 📁 config/            # Environment configurations (empty)
-│   └── 📁 constructs/        # Reusable CDK constructs (empty)
+│   ├── 📁 config/            # Environment configurations (future expansion)
+│   └── 📁 constructs/        # Reusable CDK constructs (future expansion)
 ├── 📁 lambda/                 # Lambda function code
 │   └── 📁 functions/         # Individual Lambda functions
 ├── 📁 packages/               # Shared packages and libraries
 │   └── 📁 lambda-common/     # Common Lambda library
 ├── 📁 docs/                   # Project documentation
+├── 📁 scripts/                # Deployment and management scripts (future expansion)
+├── 📁 tests/                  # Test files (future expansion)
+├── 📁 .github/                # GitHub Actions workflows (future expansion)
 ├── 📁 .claude/                # Claude AI settings
 ├── 📁 .git/                   # Git version control
 └── 📄 Configuration files
@@ -451,33 +543,37 @@ utils/
 ```
 lambda/
 └── functions/
-    └── health-check/           # Health check Lambda function
-        ├── src/
-        │   ├── constant/       # Constant definitions
-        │   ├── dto/           # Data Transfer Objects
-        │   ├── interface/     # Type interfaces (empty)
-        │   ├── service/       # Business logic services
-        │   └── lambda.ts      # Lambda handler
-        ├── package.json       # Dependency management
-        ├── tsconfig.json      # TypeScript configuration
-        └── .gitignore         # Git ignore file
+    ├── health-check/           # Health check Lambda function (implemented)
+    │   ├── src/
+    │   │   ├── constant/       # Constant definitions
+    │   │   ├── dto/           # Data Transfer Objects
+    │   │   ├── interface/     # Type interfaces (empty)
+    │   │   ├── service/       # Business logic services
+    │   │   └── lambda.ts      # Lambda handler
+    │   ├── package.json       # Dependency management
+    │   ├── tsconfig.json      # TypeScript configuration
+    │   └── .gitignore         # Git ignore file
+    ├── auth/                  # Authentication functions (planned)
+    │   └── src/
+    │       ├── lambda.ts      # Lambda entry point (controller role)
+    │       ├── dto/           # Login, register, token DTOs
+    │       ├── interface/     # Auth and user interfaces
+    │       ├── service/       # Auth, token, validation services
+    │       └── constant/      # Error and response constants
+    └── user/                  # User management functions (planned)
+        └── src/
+            ├── lambda.ts      # Lambda entry point (controller role)
+            ├── dto/           # Profile, update, delete DTOs
+            ├── interface/     # User and profile interfaces
+            ├── service/       # User, profile, validation services
+            └── constant/      # Error and response constants
 ```
 
-**Health Check Function Structure**:
-
-**constants/**:
-- `error-info.constant.ts`: Error codes and messages
-- `service-code.constant.ts`: Service code definitions
-
-**dto/**:
-- `health-check-request.dto.ts`: Request data validation
-- `health-check-response.dto.ts`: Response format definition
-
-**service/**:
-- `health-check.service.ts`: Health check business logic
-- `logger.service.ts`: Logging service
-
-**lambda.ts**: API Gateway event processing and response
+**Lambda Function Architecture**:
+- **MVC Pattern Implementation**: Each function starts with a single `lambda.ts` file (controller)
+- **Layered Structure**: DTO, Interface, Service, Constant separation
+- **Microservice Unit**: One Lambda function handles up to 10 API endpoints
+- **Common Package Dependency**: Uses `@hun_meta/lambda-common` package
 
 ### `/packages` - Shared Packages
 **Purpose**: Common libraries and utilities shared between Lambda functions
@@ -491,74 +587,53 @@ packages/
     │   ├── interface/         # Common interfaces
     │   ├── service/          # Common services
     │   └── index.ts          # Package entry point
+    ├── dist/                 # TypeScript compilation output
     ├── package.json          # Package configuration
     ├── tsconfig.json         # TypeScript configuration
     ├── .eslintrc.js         # ESLint configuration
+    ├── .gitignore           # Git ignore file
     └── README.md            # Package documentation
 ```
 
-**lambda-common Library**:
+**lambda-common Library Features**:
+- **NPM Package Format**: Published as `@hun_meta/lambda-common`
+- **Local File Path Reference**: `file:../../../packages/lambda-common`
+- **TypeScript Build**: `src/` → `dist/` compilation
+- **Modular Structure**: Separated constant, exception, interface, service
+- **Centralized Common Code Management**: Error codes, service classes, type definitions
 
-**constants/**:
-- `common-code.constant.ts`: Common action codes
-- `error-info.constant.ts`: Error information
-- `http-status.constant.ts`: HTTP status codes
-- `success-info.constant.ts`: Success messages
-- `table-code.constant.ts`: Database table codes
+### 🏷️ Naming Conventions
 
-**exception/**:
-- `custom.exception.ts`: Custom exception classes
+#### Stack Naming
+- **Format**: `{Environment}{Service}Stack`
+- **Example**: `DevVpcStack`, `ProdLambdaStack`
 
-**interface/**:
-- `response.types.ts`: API response type definitions
+#### Lambda Function Naming
+- **Format**: `{environment}-{domain}-function`
+- **Example**: `dev-auth-function`, `prod-user-function`
+- **Description**: Each function handles up to 10 API endpoints as a microservice unit
 
-**service/**:
-- `base.service.ts`: Base service class
-- `base-external.service.ts`: External service base class
-- `database.service.ts`: Database service
-- `logger.service.ts`: Logging service
-- `response-handler.service.ts`: API response handling
+### 🎯 Architecture Benefits
 
-### `/docs` - Project Documentation
-**Purpose**: Project-related documentation and guides
+#### 1. **Scalability**
+- Domain-based Lambda function separation
+- Each function handles up to 10 APIs for optimal size
+- Independent deployment and scaling
 
-```
-docs/
-├── COMMIT_CONVENTION.md      # Commit message rules
-├── PRIVATE_NPM_PACKAGE.md    # NPM package management guide
-└── REPOSITORY_STRUCTURE.md   # Repository structure description
-```
+#### 2. **Maintainability**
+- Clear separation of concerns with MVC pattern
+- Singleton pattern for service instance management
+- Layered structure for improved code readability
 
-### Configuration Files
+#### 3. **Reusability**
+- Common libraries (`lambda-common`) utilization
+- Standardized DTOs and interfaces
+- Consistent error handling and response formats
 
-#### Root Level Configuration Files
-```
-├── package.json              # Project dependencies and scripts
-├── tsconfig.json            # TypeScript configuration
-├── cdk.json                 # CDK configuration and environment setup
-├── cdk.context.json         # CDK context cache
-├── jest.config.js           # Jest test configuration (future use)
-├── .gitignore              # Git ignore file
-├── LICENSE                 # MIT License
-└── README.md               # Project overview
-```
-
-**Key Configuration File Roles**:
-
-**package.json**:
-- CDK and TypeScript dependencies
-- Build and deployment scripts
-- Environment-specific deployment commands
-
-**cdk.json**:
-- CDK application entry point
-- Environment-specific account and region settings
-- CDK feature flags and context
-
-**tsconfig.json**:
-- TypeScript compilation settings
-- Module resolution and build options
-- Type checking rules
+#### 4. **Testability**
+- Independent testing for each layer
+- Easy unit testing for service layer
+- Isolated testing with mock objects
 
 ## 🔗 File Relationships and Dependencies
 
@@ -642,3 +717,5 @@ aws logs tail /aws/lambda/health-check --follow
 - Implement proper error handling and logging
 - Maintain environment parity between dev and prod
 - Document all custom configurations and decisions
+
+This structure satisfies the requirements of `cdk_request_template.md` and includes all components of a serverless backend architecture, designed with consideration for development/production environment separation, zero-downtime deployment, and maintainability.
