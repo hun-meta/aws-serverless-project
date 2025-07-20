@@ -9,11 +9,15 @@
     "emitDecoratorMetadata": true,
     "strictPropertyInitialization": false,
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": "./",
     "noImplicitAny": false,
     "skipLibCheck": true, // node_modules 내의 타입 선언파일 검사 x
-    "types": ["node"]
+    "types": ["node", "jest"],
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.spec.ts"]
+  "include": ["src/**/*", "test/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

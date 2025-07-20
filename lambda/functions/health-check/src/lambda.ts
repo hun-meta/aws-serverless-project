@@ -18,10 +18,7 @@ export const handler = async (event: APIGatewayProxyEvent, context: Context): Pr
 
     // Parse request body
     const requestBody = event.body ? JSON.parse(event.body) : {};
-    const requestDto = new HealthCheckRequestDto();
-    if (requestBody.requestTimestamp) {
-      requestDto.requestTimestamp = requestBody.requestTimestamp;
-    }
+    const requestDto = new HealthCheckRequestDto(requestBody.requestTimestamp);
 
     // Process health check
     const responseDto: HealthCheckResponseDto = await healthCheckService.healthCheck(requestDto);

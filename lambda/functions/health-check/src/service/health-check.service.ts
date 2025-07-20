@@ -30,7 +30,7 @@ export class HealthCheckService extends BaseService {
 
         const healthCheckTime = this.getHealthCheckTime();
         
-        return new HealthCheckResponseDto(true, healthCheckTime, requestTimestamp);
+        return new HealthCheckResponseDto(true, healthCheckTime, requestTimestamp || Date.now());
     }
 
     private getHealthCheckTime(): string {

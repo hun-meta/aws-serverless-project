@@ -11,5 +11,9 @@ export class HealthCheckRequestDto {
     
     @IsOptional()
     @IsNumber()
-    requestTimestamp: number = Date.now();
+    requestTimestamp?: number;
+    
+    constructor(timestamp?: number) {
+        this.requestTimestamp = timestamp ?? Date.now();
+    }
 }
