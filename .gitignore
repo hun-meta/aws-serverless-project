@@ -99,6 +99,21 @@ Thumbs.db
 # TypeScript 캐시
 *.tsbuildinfo
 
+# TypeScript 빌드 결과물
+*.js
+*.d.ts
+*.js.map
+
+# 예외: CDK 엔트리포인트
+!bin/cdk-prj.js
+
+# 예외: ESLint 설정
+!.eslintrc.js
+!packages/lambda-common/.eslintrc.js
+
+# 예외: Jest 설정
+!jest.config.js
+
 # AWS CDK 관련
 cdk.out/
 **/cdk.out/

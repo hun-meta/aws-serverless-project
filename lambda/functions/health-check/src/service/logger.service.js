@@ -1,6 +1,0 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const lambda_common_1 = require("@hun_meta/lambda-common");
-const loggerService = lambda_common_1.LoggerService.getInstance();
-exports.default = loggerService;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoibG9nZ2VyLnNlcnZpY2UuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJsb2dnZXIuc2VydmljZS50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztBQUFBLDJEQUF3RDtBQUV4RCxNQUFNLGFBQWEsR0FBRyw2QkFBYSxDQUFDLFdBQVcsRUFBRSxDQUFDO0FBRWxELGtCQUFlLGFBQWEsQ0FBQyIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IExvZ2dlclNlcnZpY2UgfSBmcm9tIFwiQGh1bl9tZXRhL2xhbWJkYS1jb21tb25cIjtcblxuY29uc3QgbG9nZ2VyU2VydmljZSA9IExvZ2dlclNlcnZpY2UuZ2V0SW5zdGFuY2UoKTtcblxuZXhwb3J0IGRlZmF1bHQgbG9nZ2VyU2VydmljZTsiXX0=

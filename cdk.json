@@ -62,11 +62,11 @@
     "@aws-cdk/aws-codepipeline-actions:useNewDefaultBranchForSourceAction": true,
     "environments": {
       "dev": {
-        "account": "123456789012",
+        "account": "421075015787",
         "region": "ap-northeast-2"
       },
       "prod": {
-        "account": "123456789012",
+        "account": "421075015787",
         "region": "ap-northeast-2"
       }
     }

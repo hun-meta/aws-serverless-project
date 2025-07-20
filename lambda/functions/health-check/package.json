@@ -11,12 +11,13 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
-    "class-validator": "^0.14.2",
-    "@types/aws-lambda": "^8.10.0",
     "@types/node": "^18.0.0",
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@hun_meta/lambda-common": "file:../../../packages/lambda-common"
+    "@hun_meta/lambda-common": "file:../../../packages/lambda-common",
+    "@types/aws-lambda": "^8.10.0",
+    "@types/validator": "^13.15.2",
+    "class-validator": "^0.14.2"
   }
 }
