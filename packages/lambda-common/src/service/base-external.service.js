@@ -1,0 +1,32 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BaseExternalService = void 0;
+const error_info_constant_1 = require("../constant/error-info.constant");
+const custom_exception_1 = require("../exception/custom.exception");
+/**
+ * 외부 서비스(Database, S3, Third-party API 등)와의 상호작용을 위한 추상 기본 클래스
+ * 각 외부 서비스 클래스는 이 클래스를 상속받아 구현해야 합니다.
+ */
+class BaseExternalService {
+    constructor(externalIdentifier, externalCode) {
+        this.externalIdentifier = externalIdentifier;
+        this.externalCode = externalCode;
+    }
+    /**
+     * 외부 서비스에서 발생한 에러를 CustomException으로 변환하고 외부 식별자와 코드를 설정합니다.
+     * @param error - 발생한 에러
+     * @throws CustomException - 외부 식별자와 코드가 설정된 커스텀 예외
+     */
+    buildError(error) {
+        if (error instanceof custom_exception_1.CustomException) {
+            error.setExternalIdentifier(this.externalIdentifier);
+            error.setExternalCode(this.externalCode);
+            throw error;
+        }
+        else {
+            throw new custom_exception_1.CustomException(error, error_info_constant_1.UNDEFINED_ERROR);
+        }
+    }
+}
+exports.BaseExternalService = BaseExternalService;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYmFzZS1leHRlcm5hbC5zZXJ2aWNlLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiYmFzZS1leHRlcm5hbC5zZXJ2aWNlLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7OztBQUFBLHlFQUFrRTtBQUNsRSxvRUFBZ0U7QUFFaEU7OztHQUdHO0FBQ0gsTUFBc0IsbUJBQW1CO0lBSXJDLFlBQXNCLGtCQUEwQixFQUFFLFlBQW9CO1FBQ2xFLElBQUksQ0FBQyxrQkFBa0IsR0FBRyxrQkFBa0IsQ0FBQztRQUM3QyxJQUFJLENBQUMsWUFBWSxHQUFHLFlBQVksQ0FBQztJQUNyQyxDQUFDO0lBRUQ7Ozs7T0FJRztJQUNPLFVBQVUsQ0FBQyxLQUFZO1FBQzdCLElBQUksS0FBSyxZQUFZLGtDQUFlLEVBQUU7WUFDbEMsS0FBSyxDQUFDLHFCQUFxQixDQUFDLElBQUksQ0FBQyxrQkFBa0IsQ0FBQyxDQUFDO1lBQ3JELEtBQUssQ0FBQyxlQUFlLENBQUMsSUFBSSxDQUFDLFlBQVksQ0FBQyxDQUFDO1lBQ3pDLE1BQU0sS0FBSyxDQUFDO1NBQ2Y7YUFBSTtZQUNELE1BQU0sSUFBSSxrQ0FBZSxDQUFDLEtBQUssRUFBRSxxQ0FBZSxDQUFDLENBQUM7U0FDckQ7SUFDTCxDQUFDO0NBQ0o7QUF2QkQsa0RBdUJDIiwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgVU5ERUZJTkVEX0VSUk9SIH0gZnJvbSBcIi4uL2NvbnN0YW50L2Vycm9yLWluZm8uY29uc3RhbnRcIjtcbmltcG9ydCB7IEN1c3RvbUV4Y2VwdGlvbiB9IGZyb20gXCIuLi9leGNlcHRpb24vY3VzdG9tLmV4Y2VwdGlvblwiO1xuXG4vKipcbiAqIOyZuOu2gCDshJzruYTsiqQoRGF0YWJhc2UsIFMzLCBUaGlyZC1wYXJ0eSBBUEkg65OxKeyZgOydmCDsg4HtmLjsnpHsmqnsnYQg7JyE7ZWcIOy2lOyDgSDquLDrs7gg7YG0656Y7IqkXG4gKiDqsIEg7Jm467aAIOyEnOu5hOyKpCDtgbTrnpjsiqTripQg7J20IO2BtOuemOyKpOulvCDsg4Hsho3rsJvslYQg6rWs7ZiE7ZW07JW8IO2VqeuLiOuLpC5cbiAqL1xuZXhwb3J0IGFic3RyYWN0IGNsYXNzIEJhc2VFeHRlcm5hbFNlcnZpY2Uge1xuICAgIHByb3RlY3RlZCBleHRlcm5hbElkZW50aWZpZXI6IHN0cmluZztcbiAgICBwcm90ZWN0ZWQgZXh0ZXJuYWxDb2RlOiBzdHJpbmc7XG5cbiAgICBwcm90ZWN0ZWQgY29uc3RydWN0b3IoZXh0ZXJuYWxJZGVudGlmaWVyOiBzdHJpbmcsIGV4dGVybmFsQ29kZTogc3RyaW5nKSB7XG4gICAgICAgIHRoaXMuZXh0ZXJuYWxJZGVudGlmaWVyID0gZXh0ZXJuYWxJZGVudGlmaWVyO1xuICAgICAgICB0aGlzLmV4dGVybmFsQ29kZSA9IGV4dGVybmFsQ29kZTtcbiAgICB9XG5cbiAgICAvKipcbiAgICAgKiDsmbjrtoAg7ISc67mE7Iqk7JeQ7IScIOuwnOyDne2VnCDsl5Drn6zrpbwgQ3VzdG9tRXhjZXB0aW9u7Jy866GcIOuzgO2ZmO2VmOqzoCDsmbjrtoAg7Iud67OE7J6Q7JmAIOy9lOuTnOulvCDshKTsoJXtlanri4jri6QuXG4gICAgICogQHBhcmFtIGVycm9yIC0g67Cc7IOd7ZWcIOyXkOufrFxuICAgICAqIEB0aHJvd3MgQ3VzdG9tRXhjZXB0aW9uIC0g7Jm467aAIOyLneuzhOyekOyZgCDsvZTrk5zqsIAg7ISk7KCV65CcIOy7pOyKpO2FgCDsmIjsmbhcbiAgICAgKi9cbiAgICBwcm90ZWN0ZWQgYnVpbGRFcnJvcihlcnJvcjogRXJyb3IpOiBuZXZlciB7XG4gICAgICAgIGlmIChlcnJvciBpbnN0YW5jZW9mIEN1c3RvbUV4Y2VwdGlvbikge1xuICAgICAgICAgICAgZXJyb3Iuc2V0RXh0ZXJuYWxJZGVudGlmaWVyKHRoaXMuZXh0ZXJuYWxJZGVudGlmaWVyKTtcbiAgICAgICAgICAgIGVycm9yLnNldEV4dGVybmFsQ29kZSh0aGlzLmV4dGVybmFsQ29kZSk7XG4gICAgICAgICAgICB0aHJvdyBlcnJvcjtcbiAgICAgICAgfWVsc2V7XG4gICAgICAgICAgICB0aHJvdyBuZXcgQ3VzdG9tRXhjZXB0aW9uKGVycm9yLCBVTkRFRklORURfRVJST1IpO1xuICAgICAgICB9XG4gICAgfVxufSJdfQ==

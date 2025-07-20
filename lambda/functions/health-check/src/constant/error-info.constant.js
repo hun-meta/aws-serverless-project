@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DATE_NOT_FOUND = void 0;
+const lambda_common_1 = require("@hun_meta/lambda-common");
+exports.DATE_NOT_FOUND = {
+    status: lambda_common_1.NOT_FOUND,
+    returnCode: lambda_common_1.COMMON_ACTION_CODES.NOT_FOUND,
+    message: 'Input Date Not Found',
+};
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZXJyb3ItaW5mby5jb25zdGFudC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImVycm9yLWluZm8uY29uc3RhbnQudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7O0FBQUEsMkRBQXVGO0FBSzFFLFFBQUEsY0FBYyxHQUFpQjtJQUN4QyxNQUFNLEVBQUUseUJBQVM7SUFDakIsVUFBVSxFQUFFLG1DQUFtQixDQUFDLFNBQVM7SUFDekMsT0FBTyxFQUFFLHNCQUFzQjtDQUNsQyxDQUFBIiwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgQ09NTU9OX0FDVElPTl9DT0RFUywgUmVzcG9uc2VJbmZvLCBOT1RfRk9VTkQgfSBmcm9tICdAaHVuX21ldGEvbGFtYmRhLWNvbW1vbic7XG5cblxuXG5cbmV4cG9ydCBjb25zdCBEQVRFX05PVF9GT1VORDogUmVzcG9uc2VJbmZvID0ge1xuICAgIHN0YXR1czogTk9UX0ZPVU5ELFxuICAgIHJldHVybkNvZGU6IENPTU1PTl9BQ1RJT05fQ09ERVMuTk9UX0ZPVU5ELFxuICAgIG1lc3NhZ2U6ICdJbnB1dCBEYXRlIE5vdCBGb3VuZCcsXG59Il19
